@@ -1,0 +1,26 @@
+# Archivo de configuración básico para Doxygen
+
+# Nombre del proyecto
+PROJECT_NAME           = "Laboratorio E IV"
+
+# Directorio donde se genera la documentación
+OUTPUT_DIRECTORY       = build/doc
+
+# Generar salida HTML
+GENERATE_HTML          = YES
+HTML_OUTPUT            = html
+
+# No generar LaTeX
+GENERATE_LATEX         = NO
+
+# Directorios donde buscar los archivos fuente
+INPUT                  = src inc
+
+# Extensiones válidas
+FILE_PATTERNS          = *.c *.h
+
+# Recursividad en subdirectorios (opcional)
+RECURSIVE              = YES
+
+# Mostrar gráficos de llamadas (si tenés Graphviz)
+HAVE_DOT               = NO
