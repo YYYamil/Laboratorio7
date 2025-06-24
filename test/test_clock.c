@@ -18,6 +18,11 @@
     TEST_ASSERT_EQUAL_UINT8_MESSAGE(hours_units, current_time.bcd[4], "Difference in unit hours"); \
     TEST_ASSERT_EQUAL_UINT8_MESSAGE(hours_tens, current_time.bcd[5], "Difference in tens hours")
 
+clock_t clock;
+
+void setUp(void){
+    clock =ClockCreate(CLOCK_TICKS_PER_SECOND);
+}
 
 static void SimulateSeconds(clock_t clock, uint8_t seconds) {
     for (uint8_t i = 0; i < CLOCK_TICKS_PER_SECOND * seconds; i++) {
@@ -25,11 +30,7 @@ static void SimulateSeconds(clock_t clock, uint8_t seconds) {
     }
 }
 
-clock_t clock;
 
-void setUp(void){
-    clock =ClockCreate(CLOCK_TICKS_PER_SECOND);
-}
 
 
 
@@ -39,7 +40,7 @@ void test_set_up_with_invalid_time(void) {
     .bcd = {1, 2, 3, 4, 5, 6}
     };
 
-    clock_t clock = ClockCreate(CLOCK_TICKS_PER_SECOND);
+    //clock_t clock = ClockCreate(CLOCK_TICKS_PER_SECOND);
     
     TEST_ASSERT_FALSE(ClockGetTime(clock, &current_time));
     TEST_ASSERT_EACH_EQUAL_UINT8(0, current_time.bcd, 6);
@@ -53,7 +54,7 @@ void test_set_up_and_adjust_with_valid_time(void){
     };
 
     clock_time_t current_time = {0};
-    clock_t clock = ClockCreate(CLOCK_TICKS_PER_SECOND);
+    //clock_t clock = ClockCreate(CLOCK_TICKS_PER_SECOND);
 
     TEST_ASSERT_TRUE(ClockSetTime(clock, &new_time));
     TEST_ASSERT_TRUE(ClockGetTime(clock, &current_time));
@@ -72,4 +73,93 @@ void test_clock_advance_one_second(void) {
     ClockGetTime(clock, &current_time);
     
     TEST_ASSERT_TIME(1,0,0,0,0,0,current_time);
+}
+
+void test_clock_advance_ten_seconds(void) {
+    clock_time_t current_time = {0};
+    ClockSetTime(clock, &(clock_time_t){0});
+    SimulateSeconds(clock, 10);
+    ClockGetTime(clock, &current_time);
+    TEST_ASSERT_TIME(0, 1, 0, 0, 0, 0, current_time);  // 10 segundos
+}
+
+void test_clock_advance_one_minute(void) {
+    clock_time_t current_time = {0};
+    ClockSetTime(clock, &(clock_time_t){0});
+    SimulateSeconds(clock, 60);
+    ClockGetTime(clock, &current_time);
+    TEST_ASSERT_TIME(0, 0, 0, 1, 0, 0, current_time);  // 01:00
+}
+
+void test_clock_advance_ten_minutes(void) {
+    clock_time_t current_time = {0};
+    ClockSetTime(clock, &(clock_time_t){0});
+    SimulateSeconds(clock, 600);
+    ClockGetTime(clock, &current_time);
+    TEST_ASSERT_TIME(0, 0, 0, 0, 0, 1, current_time);  // 10:00
+}
+
+void test_clock_advance_one_hour(void) {
+    clock_time_t current_time = {0};
+    ClockSetTime(clock, &(clock_time_t){0});
+    SimulateSeconds(clock, 3600);
+    ClockGetTime(clock, &current_time);
+    TEST_ASSERT_TIME(0, 0, 0, 0, 1, 0, current_time);  // 01:00:00
+}
+
+void test_clock_advance_ten_hours(void) {
+    clock_time_t current_time = {0};
+    ClockSetTime(clock, &(clock_time_t){0});
+    SimulateSeconds(clock, 36000);
+    ClockGetTime(clock, &current_time);
+    TEST_ASSERT_TIME(0, 0, 0, 0, 0, 1, current_time);  // 10:00:00
+}
+
+void test_set_and_get_alarm_time(void) {
+    clock_time_t alarm_time = {
+        .seconds = {0, 0},
+        .minutes = {0, 0},
+        .hours = {5, 1} // 15:00:00
+    };
+    
+    clock_time_t retrieved_time = {0};
+
+    TEST_ASSERT_TRUE(ClockSetAlarmTime(clock, &alarm_time));
+    TEST_ASSERT_TRUE(ClockGetAlarmTime(clock, &retrieved_time));
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(alarm_time.bcd, retrieved_time.bcd, 6);
+}
+
+
+void test_alarm_does_not_trigger_when_disabled(void) {
+    clock_time_t time = {
+        .seconds = {0, 0},
+        .minutes = {0, 0},
+        .hours = {0, 0}
+    };
+
+    ClockSetTime(clock, &time);
+    ClockSetAlarmTime(clock, &time);
+    ClockDisableAlarm(clock);
+
+    SimulateSeconds(clock, 1); // avanzar 1 segundo, alarma debería estar deshabilitada
+
+    // Comprobamos que la alarma está deshabilitada y no sonaría (no hay "evento" aún)
+    TEST_ASSERT_FALSE(ClockIsAlarmEnabled(clock));
+}
+
+
+void test_alarm_triggers_when_time_matches(void) {
+    clock_time_t time = {
+        .seconds = {0, 0},
+        .minutes = {0, 0},
+        .hours = {0, 0}
+    };
+
+    ClockSetTime(clock, &time);
+    ClockSetAlarmTime(clock, &time);
+    ClockEnableAlarm(clock);
+
+    SimulateSeconds(clock, 1); // Simula 1 segundo
+
+    TEST_ASSERT_TRUE(ClockIsAlarmTriggered(clock)); // La hora coincide con la alarma
 }

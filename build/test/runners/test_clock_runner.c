@@ -18,6 +18,14 @@ extern void tearDown(void);
 extern void test_set_up_with_invalid_time(void);
 extern void test_set_up_and_adjust_with_valid_time(void);
 extern void test_clock_advance_one_second(void);
+extern void test_clock_advance_ten_seconds(void);
+extern void test_clock_advance_one_minute(void);
+extern void test_clock_advance_ten_minutes(void);
+extern void test_clock_advance_one_hour(void);
+extern void test_clock_advance_ten_hours(void);
+extern void test_set_and_get_alarm_time(void);
+extern void test_alarm_does_not_trigger_when_disabled(void);
+extern void test_alarm_triggers_when_time_matches(void);
 
 
 /*=======Mock Management=====*/
@@ -98,15 +106,39 @@ static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE l
       UNITY_PRINT_EOL();
       UnityPrint("  test_clock_advance_one_second");
       UNITY_PRINT_EOL();
+      UnityPrint("  test_clock_advance_ten_seconds");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_clock_advance_one_minute");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_clock_advance_ten_minutes");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_clock_advance_one_hour");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_clock_advance_ten_hours");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_set_and_get_alarm_time");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_alarm_does_not_trigger_when_disabled");
+      UNITY_PRINT_EOL();
+      UnityPrint("  test_alarm_triggers_when_time_matches");
+      UNITY_PRINT_EOL();
       return 0;
     }
     return parse_status;
   }
 #endif
   UnityBegin("test_clock.c");
-  run_test(test_set_up_with_invalid_time, "test_set_up_with_invalid_time", 37);
-  run_test(test_set_up_and_adjust_with_valid_time, "test_set_up_and_adjust_with_valid_time", 48);
-  run_test(test_clock_advance_one_second, "test_clock_advance_one_second", 64);
+  run_test(test_set_up_with_invalid_time, "test_set_up_with_invalid_time", 38);
+  run_test(test_set_up_and_adjust_with_valid_time, "test_set_up_and_adjust_with_valid_time", 49);
+  run_test(test_clock_advance_one_second, "test_clock_advance_one_second", 65);
+  run_test(test_clock_advance_ten_seconds, "test_clock_advance_ten_seconds", 78);
+  run_test(test_clock_advance_one_minute, "test_clock_advance_one_minute", 86);
+  run_test(test_clock_advance_ten_minutes, "test_clock_advance_ten_minutes", 94);
+  run_test(test_clock_advance_one_hour, "test_clock_advance_one_hour", 102);
+  run_test(test_clock_advance_ten_hours, "test_clock_advance_ten_hours", 110);
+  run_test(test_set_and_get_alarm_time, "test_set_and_get_alarm_time", 118);
+  run_test(test_alarm_does_not_trigger_when_disabled, "test_alarm_does_not_trigger_when_disabled", 133);
+  run_test(test_alarm_triggers_when_time_matches, "test_alarm_triggers_when_time_matches", 151);
 
   return UNITY_END();
 }
