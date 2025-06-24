@@ -1,0 +1,27 @@
+---
+:source:
+  :file: test/test_clock.c
+  :dirname: test
+  :basename: test_clock.c
+:successes:
+- :test: test_set_up_with_invalid_time
+  :line: 37
+  :message: ''
+  :unity_test_time: 0
+- :test: test_set_up_and_adjust_with_valid_time
+  :line: 48
+  :message: ''
+  :unity_test_time: 0
+:failures:
+- :test: test_clock_advance_one_second
+  :line: 74
+  :message: Expected 1 Was 0. Difference in unit seconds
+  :unity_test_time: 0
+:ignores: []
+:counts:
+  :total: 3
+  :passed: 2
+  :failed: 1
+  :ignored: 0
+:stdout: []
+:time: 0.0031229989981511608
