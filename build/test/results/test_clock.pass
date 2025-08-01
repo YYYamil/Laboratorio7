@@ -1,0 +1,59 @@
+---
+:source:
+  :file: test/test_clock.c
+  :dirname: test
+  :basename: test_clock.c
+:successes:
+- :test: test_set_up_with_invalid_time
+  :line: 38
+  :message: ''
+  :unity_test_time: 0
+- :test: test_set_up_and_adjust_with_valid_time
+  :line: 44
+  :message: ''
+  :unity_test_time: 0
+- :test: test_clock_advance_one_second
+  :line: 54
+  :message: ''
+  :unity_test_time: 0
+- :test: test_clock_advance_ten_seconds
+  :line: 62
+  :message: ''
+  :unity_test_time: 0
+- :test: test_clock_advance_one_minute
+  :line: 70
+  :message: ''
+  :unity_test_time: 0
+- :test: test_set_and_get_alarm_time
+  :line: 90
+  :message: ''
+  :unity_test_time: 0
+- :test: test_alarm_does_not_trigger_when_disabled
+  :line: 100
+  :message: ''
+  :unity_test_time: 0
+- :test: test_alarm_triggers_when_time_matches
+  :line: 111
+  :message: ''
+  :unity_test_time: 0
+:failures: []
+:ignores:
+- :test: test_clock_advance_ten_minutes
+  :line: 24
+  :message: Test deshabilitado temporalmente por exceso de tiempo simulado.
+  :unity_test_time: 0
+- :test: test_clock_advance_one_hour
+  :line: 24
+  :message: Test deshabilitado temporalmente por exceso de tiempo simulado.
+  :unity_test_time: 0
+- :test: test_clock_advance_ten_hours
+  :line: 24
+  :message: Test deshabilitado temporalmente por exceso de tiempo simulado.
+  :unity_test_time: 0
+:counts:
+  :total: 11
+  :passed: 8
+  :failed: 0
+  :ignored: 3
+:stdout: []
+:time: 0.00848509999923408

@@ -129,16 +129,16 @@ static void run_test(UnityTestFunction func, const char* name, UNITY_LINE_TYPE l
 #endif
   UnityBegin("test_clock.c");
   run_test(test_set_up_with_invalid_time, "test_set_up_with_invalid_time", 38);
-  run_test(test_set_up_and_adjust_with_valid_time, "test_set_up_and_adjust_with_valid_time", 49);
-  run_test(test_clock_advance_one_second, "test_clock_advance_one_second", 65);
-  run_test(test_clock_advance_ten_seconds, "test_clock_advance_ten_seconds", 78);
-  run_test(test_clock_advance_one_minute, "test_clock_advance_one_minute", 86);
-  run_test(test_clock_advance_ten_minutes, "test_clock_advance_ten_minutes", 94);
-  run_test(test_clock_advance_one_hour, "test_clock_advance_one_hour", 102);
-  run_test(test_clock_advance_ten_hours, "test_clock_advance_ten_hours", 110);
-  run_test(test_set_and_get_alarm_time, "test_set_and_get_alarm_time", 118);
-  run_test(test_alarm_does_not_trigger_when_disabled, "test_alarm_does_not_trigger_when_disabled", 133);
-  run_test(test_alarm_triggers_when_time_matches, "test_alarm_triggers_when_time_matches", 151);
+  run_test(test_set_up_and_adjust_with_valid_time, "test_set_up_and_adjust_with_valid_time", 44);
+  run_test(test_clock_advance_one_second, "test_clock_advance_one_second", 54);
+  run_test(test_clock_advance_ten_seconds, "test_clock_advance_ten_seconds", 62);
+  run_test(test_clock_advance_one_minute, "test_clock_advance_one_minute", 70);
+  run_test(test_clock_advance_ten_minutes, "test_clock_advance_ten_minutes", 78);
+  run_test(test_clock_advance_one_hour, "test_clock_advance_one_hour", 82);
+  run_test(test_clock_advance_ten_hours, "test_clock_advance_ten_hours", 86);
+  run_test(test_set_and_get_alarm_time, "test_set_and_get_alarm_time", 90);
+  run_test(test_alarm_does_not_trigger_when_disabled, "test_alarm_does_not_trigger_when_disabled", 100);
+  run_test(test_alarm_triggers_when_time_matches, "test_alarm_triggers_when_time_matches", 111);
 
   return UNITY_END();
 }
