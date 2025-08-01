@@ -1,6 +1,14 @@
 #include "unity.h"
 #include "clock.h"
 
+// Al ajustar la hora el reloj queda en hora y es válida.
+// - Después de n ciclos de reloj la hora avanza un segundo, diez segundos, un minutos, diez minutos, una hora, diez
+// horas. Fijar la hora de la alarma y consultarla.
+// - Fijar la alarma y deshabilitarla y avanzar el reloj para no suene.
+// - Hacer sonar la alarma y posponerla.
+// - Hacer sonar la alarma y cancelarla hasta el otro día...
+// - Probar get_time con NULL como argumento
+
 #define CLOCK_TICKS_PER_SECOND 5
 #define MAX_SIM_SECONDS 60  // Evitar cuelgues por simulaciones largas
 
@@ -109,12 +117,7 @@ void test_alarm_does_not_trigger_when_disabled(void) {
 }
 
 void test_alarm_triggers_when_time_matches(void) {
-    // clock_time_t alarm_time = {
-    //     .seconds = {1, 0},  // Alarma a 00:00:01 (BCD)
-    //     .minutes = {0, 0},
-    //     .hours = {0, 0}
-    // };
-
+    
     clock_time_t alarm_time = { .bcd = { 1, 0, 0, 0, 0, 0 } };
 
 
@@ -124,3 +127,48 @@ void test_alarm_triggers_when_time_matches(void) {
     SimulateSeconds(clock, 2);  // Avanza 1 segundo y compara
     TEST_ASSERT_TRUE(ClockIsAlarmTriggered(clock));
 }
+
+void test_alarm_snooze(void) {
+    clock_time_t alarm_time = { .bcd = {0, 0, 5, 0, 0, 0} };  // 00:05:00
+    clock_time_t expected_snoozed = { .bcd = {0, 0, 5, 5, 0, 0} }; // 00:55:00 (5 + 50 minutos)
+
+    ClockSetAlarmTime(clock, &alarm_time);
+    ClockEnableAlarm(clock);
+
+    // Simular que suena la alarma
+    clock->alarm_triggered = true;
+
+    // Posponer 50 minutos
+    ClockSnoozeAlarm(clock, 50);
+
+    clock_time_t current_alarm = {0};
+    ClockGetAlarmTime(clock, &current_alarm);
+    
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(expected_snoozed.bcd, current_alarm.bcd, 6);
+    TEST_ASSERT_FALSE(ClockIsAlarmTriggered(clock));  // Alarma reiniciada
+}
+
+void test_alarm_cancel_for_tomorrow(void) {
+    clock_time_t alarm_time = { .bcd = {0, 0, 0, 0, 2, 3} };  // 23:00:00
+    clock_time_t expected_time = { .bcd = {0, 0, 0, 0, 0, 0} }; // 00:00:00 (día siguiente)
+
+    ClockSetAlarmTime(clock, &alarm_time);
+    ClockEnableAlarm(clock);
+
+    ClockCancelAlarmForTomorrow(clock);
+
+    clock_time_t current_alarm = {0};
+    ClockGetAlarmTime(clock, &current_alarm);
+
+    TEST_ASSERT_FALSE(ClockIsAlarmTriggered(clock));
+
+    uint8_t expected[6] = {0, 0, 0, 0, 0, 0};
+    TEST_ASSERT_EQUAL_UINT8_ARRAY(expected, current_alarm.bcd, 6);
+}
+
+void test_get_time_with_null_pointer(void) {
+    ClockSetTime(clock, &(clock_time_t){0});  // inicializa reloj válido
+    bool ret = ClockGetTime(clock, NULL);
+    TEST_ASSERT_TRUE(ret);  // Debe devolver true porque el reloj es válido
+}
+

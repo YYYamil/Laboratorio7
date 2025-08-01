@@ -34,5 +34,9 @@ bool ClockIsAlarmEnabled(clock_t self);
 bool ClockIsAlarmTriggered(clock_t self);
 void ClockNewTick(clock_t self);
 
+void ClockSnoozeAlarm(clock_t self, uint8_t minutes);
+void ClockCancelAlarmForTomorrow(clock_t self);
+
+
 #endif
 

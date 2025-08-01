@@ -18,7 +18,16 @@ clock_t ClockCreate(uint16_t ticks_per_second) {
 
 
 
-bool ClockGetTime(clock_t self, clock_time_t *result) {
+// bool ClockGetTime(clock_t self, clock_time_t *result) {
+//     if (!self || !self->valid) {
+//         if (result) memset(result, 0, sizeof(clock_time_t));
+//         return false;
+//     }
+//     if (result) memcpy(result, &self->current_time, sizeof(clock_time_t));
+//     return true;
+// }
+
+bool ClockGetTime(clock_t self, clock_time_t * result) {
     if (!self || !self->valid) {
         if (result) memset(result, 0, sizeof(clock_time_t));
         return false;
@@ -26,6 +35,7 @@ bool ClockGetTime(clock_t self, clock_time_t *result) {
     if (result) memcpy(result, &self->current_time, sizeof(clock_time_t));
     return true;
 }
+
 
 
 
@@ -105,3 +115,62 @@ bool ClockIsAlarmEnabled(clock_t self) {
 bool ClockIsAlarmTriggered(clock_t self) {
     return self && self->alarm_triggered;
 }
+
+void ClockSnoozeAlarm(clock_t self, uint8_t minutes) {
+    if (!self || !self->alarm_enabled) return;
+
+    // Calcular nuevo tiempo de alarma sumando minutos
+    uint8_t *bcd = self->alarm_time.bcd;
+
+    // Sumar minutos con carry BCD
+    bcd[2] += minutes % 10;                 // unidades de minutos
+    if (bcd[2] > 9) {
+        bcd[2] -= 10;
+        bcd[3]++;
+    }
+
+    bcd[3] += minutes / 10;                  // decenas de minutos
+    if (bcd[3] > 5) {
+        bcd[3] -= 6;
+        bcd[4]++;
+    }
+
+    // Ajustar horas si pasamos de 23:59
+    if (bcd[4] > 9) {
+        bcd[4] = 0;
+        bcd[5]++;
+    }
+    if (bcd[5] > 2 || (bcd[5] == 2 && bcd[4] > 3)) {
+        bcd[5] = 0;
+    }
+
+    // Resetear alarma disparada para poder sonar después de posponer
+    self->alarm_triggered = false;
+}
+
+void ClockCancelAlarmForTomorrow(clock_t self) {
+    if (!self || !self->alarm_enabled) return;
+
+    uint8_t *bcd = self->alarm_time.bcd;
+
+    // Sumar 24 horas en BCD:
+    bcd[4] += 4;  // unidades horas +4
+    bcd[5] += 2;  // decenas horas +2
+
+    // Ajustar unidades horas si > 9
+    if (bcd[4] > 9) {
+        bcd[4] -= 10;
+        bcd[5]++;
+    }
+
+    // Ajustar si la hora pasa de 23
+    if (bcd[5] > 2 || (bcd[5] == 2 && bcd[4] > 3)) {
+        bcd[5] = 0;
+        bcd[4] = 0;
+    }
+
+    // Reiniciar alarma disparada para que vuelva a sonar mañana
+    self->alarm_triggered = false;
+}
+
+
